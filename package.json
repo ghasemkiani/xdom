@@ -1,14 +1,16 @@
 {
 	"name": "@ghasemkiani/xdom",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"description": "",
 	"type": "module",
 	"main": "index.js",
 	"scripts": {
 		"test": "node --test"
 	},
-	"keywords": [],
-	"author": "",
+	"keywords": [
+		"dom"
+	],
+	"author": "Ghasem Kiani",
 	"license": "MIT",
 	"dependencies": {
 		"@ghasemkiani/base": "github:ghasemkiani/base"
