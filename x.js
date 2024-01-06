@@ -167,6 +167,7 @@ class X extends Obj {
 		let res = x.parseTag(tag);
 		let node = document.createElement(res.tag);
 		x.chain(node, res.f);
+		x.chain(node, f);
 		return node;
 	}
 	dcx(...rest) {
@@ -183,6 +184,7 @@ class X extends Obj {
 		let res = x.parseTag(tag);
 		let node = document.createElementNS(ns, res.tag);
 		x.chain(node, res.f);
+		x.chain(node, f);
 		return node;
 	}
 	dcc(tag, f) {
@@ -215,6 +217,41 @@ class X extends Obj {
 		let node = document.createComment(text);
 		x.chain(node, f);
 		return node;
+	}
+	c(node, ...rest) {
+		let x = this;
+		return x.ap(node, x.dc(...rest));
+	}
+	cx(node, ...rest) {
+		let x = this;
+		return x.ap(node, x.dcx(...rest));
+	}
+	cc(node, ...rest) {
+		let x = this;
+		return x.ap(node, x.dcc(...rest));
+	}
+	ch(node, ...rest) {
+		let x = this;
+		return x.ap(node, x.dch(...rest));
+	}
+	cg(node, tag, f) {
+		let x = this;
+		return x.ap(node, x.dcg(tag, f));
+	}
+	cm(node, tag, f) {
+		let x = this;
+		return x.ap(node, x.dcm(tag, f));
+	}
+	t(node, text, f) {
+		let x = this;
+		let node1 = x.dt(text);
+		x.ap(node, node1);
+		x.chain(node1, f);
+		return node1;
+	}
+	comment(node, text, f) {
+		let x = this;
+		return x.ap(node, x.dcomment(text, f));
 	}
 	ns(node) {
 		return node.namespaceURI;
@@ -297,6 +334,7 @@ class X extends Obj {
 	ap(node, node1) {
 		let x = this;
 		node.appendChild(node1);
+		return node1;
 	}
 	aps(node, nodes) {
 		let x = this;
@@ -311,9 +349,6 @@ class X extends Obj {
 		
 	}
 	css(node, k, v) {
-		
-	}
-	t(node, text) {
 		
 	}
 	kind(node) {
@@ -358,6 +393,10 @@ class X extends Obj {
 		let x = this;
 		return Array.from(x.fromStr(string, mime).childNodes);
 	}
+	fromStrNode(string, mime) {
+		let x = this;
+		return x.fromStrNodes(string, mime)[0];
+	}
 	fromStrElement(string, mime) {
 		let x = this;
 		return x.fromStr(string, mime).documentElement;
@@ -369,19 +408,51 @@ class X extends Obj {
 		let x = this;
 		let {window, document} = x;
 		return [
-			"win",
-			"doc",
-			"defns",
-			"ns",
-			"tag",
-			"pref",
-			"name",
-			"root",
 			"kind",
 			"toStr",
 			"fromStr",
 			"fromStrH",
+			"fromStrNodes",
+			"fromStrNode",
+			"fromStrElement",
+			"root",
+			
+			"chain",
+			"win",
+			"doc",
+			"defns",
+			"dc",
 			"dcx",
+			"dcc",
+			"dch",
+			"dcg",
+			"dcm",
+			"dt",
+			"dcomment",
+			"c",
+			"cx",
+			"cc",
+			"ch",
+			"cg",
+			"cm",
+			"t",
+			"comment",
+			"ns",
+			"tag",
+			"pref",
+			"name",
+			"toStrAll",
+			"toText",
+			"toTextAll",
+			"clone",
+			"cloneAll",
+			"nodes",
+			"elements",
+			"remove",
+			"cl",
+			"ap",
+			"aps",
+			"insertBefore",
 		].reduce((env, k) => (env[k] = x[k].bind(x), env), {x, window, document});
 	}
 	static env(...rest) {
