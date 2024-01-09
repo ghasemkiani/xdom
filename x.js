@@ -466,7 +466,7 @@ class X extends Obj {
 	}
 	attr(...rest) {
 		let x = this;
-		if (res.length < 3) {
+		if (rest.length < 3) {
 			let [node, k] = rest;
 			return node.getAttribute(k);
 		} else {
@@ -481,7 +481,7 @@ class X extends Obj {
 	}
 	attrx(...rest) {
 		let x = this;
-		if (res.length < 4) {
+		if (rest.length < 4) {
 			let [node, k, ns] = rest;
 			let {name, prefix: pref, localName: nm, namespaceURI, value} = node.getAttributeNodeNS(ns, k);
 			return {name, pref, nm, ns, value};
@@ -497,7 +497,7 @@ class X extends Obj {
 	}
 	attrs(...rest) {
 		let x = this;
-		if (res.length < 2) {
+		if (rest.length < 2) {
 			let [node] = rest;
 			return node.getAttributeNames().map(k => [k, node.getAttribute(k)]);
 		} else {
@@ -513,7 +513,7 @@ class X extends Obj {
 	}
 	css(...rest) {
 		let x = this;
-		if (res.length < 2) {
+		if (rest.length < 2) {
 			let [node] = rest;
 			return new Style({string: x.attr(node, "style")}).props;
 		} else {
@@ -647,4 +647,4 @@ class X extends Obj {
 	}
 }
 
-export {X};
+export {X, Style, Rule, RuleSet, Stylesheet};
