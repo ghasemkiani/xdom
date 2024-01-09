@@ -12,6 +12,32 @@ const chain = (arg, f, ...rest) => {
 	return result;
 };
 
+class Script extends Obj {
+	static {
+		cutil.extend(this.prototype, {
+			mime: "application/javascript",
+			_items: null,
+		});
+	}
+	get items() {
+		if (cutil.na(this._items)) {
+			this._items = [];
+		}
+		return this._items;
+	}
+	set items(items) {
+		this._items = items;
+	}
+	add(f, arg) {
+		this.items.push([f, arg]);
+		return this;
+	}
+	toString() {
+		const AsyncFunction = (async function () {}).constructor;
+		return this.items.map(([f, arg]) => `(${f instanceof AsyncFunction ? "await " : ""}(${f.toString()})(${!cutil.isUndefined(arg) ? JSON.stringify(arg) : ""}));`).join("\n") + "\n";
+	}
+}
+
 class Style extends Obj {
 	static {
 		cutil.extend(this.prototype, {
@@ -94,6 +120,7 @@ class RuleSet extends Obj {
 class Stylesheet extends Obj {
 	static {
 		cutil.extend(this.prototype, {
+			mime: "text/css",
 			_rules: null,
 		});
 	}
@@ -533,11 +560,7 @@ class X extends Obj {
 	}
 	js(f, arg) {
 		let x = this;
-		return `(${f.toString()})(${!cutil.isUndefined(arg) ? JSON.stringify(arg) : ""});\n`;
-	}
-	jsAsync(f, arg) {
-		let x = this;
-		return `(await (${f.toString()})(${!cutil.isUndefined(arg) ? JSON.stringify(arg) : ""}));\n`;
+		return new Script().add(f, arg);
 	}
 	kind(node) {
 		let x = this;
@@ -647,7 +670,6 @@ class X extends Obj {
 			"css",
 			"ss",
 			"js",
-			"jsAsync",
 		].reduce((env, k) => (env[k] = x[k].bind(x), env), {x, window, document});
 	}
 	static env(...rest) {
@@ -657,4 +679,4 @@ class X extends Obj {
 	}
 }
 
-export {X, Style, Rule, RuleSet, Stylesheet};
+export {X, Script, Style, Rule, RuleSet, Stylesheet};
