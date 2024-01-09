@@ -531,6 +531,14 @@ class X extends Obj {
 		x.chain(ss, f);
 		return ss;
 	}
+	js(f, arg) {
+		let x = this;
+		return `(${f.toString()})(${!cutil.isUndefined(arg) ? JSON.stringify(arg) : ""});\n`;
+	}
+	jsAsync(f, arg) {
+		let x = this;
+		return `(await (${f.toString()})(${!cutil.isUndefined(arg) ? JSON.stringify(arg) : ""}));\n`;
+	}
 	kind(node) {
 		let x = this;
 		let {window} = x;
@@ -638,6 +646,8 @@ class X extends Obj {
 			"attrs",
 			"css",
 			"ss",
+			"js",
+			"jsAsync",
 		].reduce((env, k) => (env[k] = x[k].bind(x), env), {x, window, document});
 	}
 	static env(...rest) {
