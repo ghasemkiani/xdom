@@ -1,14 +1,146 @@
 import {cutil} from "@ghasemkiani/base";
 import {Obj} from "@ghasemkiani/base";
 
+const NS_HTML = "http://www.w3.org/1999/xhtml";
+const NS_SVG = "http://www.w3.org/2000/svg";
+const NS_MATHML = "http://www.w3.org/1998/Math/MathML";
+const chain = (arg, f, ...rest) => {
+	let result;
+	if (typeof f === "function") {
+		result = f(arg, ...rest);
+	}
+	return result;
+};
+
+class Style extends Obj {
+	static {
+		cutil.extend(this.prototype, {
+			_props: null,
+		});
+	}
+	get props() {
+		if (cutil.na(this._props)) {
+			this._props = {};
+		}
+		return this._props;
+	}
+	set props(props) {
+		this._props = props;
+	}
+	clear() {
+		this.props = null;
+	}
+	add(string) {
+		let pp = cutil.isObject(string) ? Object.entries(string) : cutil.asString(string).split(";").map(s => s.trim()).filter(s => !!s).map(s => {
+			let [k, ...rest] = s.split(":");
+			let v = rest.join(":");
+			return [k, v];
+		});
+		for (let [k, v] of pp) {
+			this.props[k] = v;
+		}
+		return this;
+	}
+	fromString(string) {
+		this.add(string);
+	}
+	toString() {
+		return Object.entries(this.props).map(([k, v]) => `${k}: ${v};`).join(" ");
+	}
+}
+
+class Rule extends Obj {
+	static {
+		cutil.extend(this.prototype, {
+			selector: null,
+			_style: null,
+		});
+	}
+	get style() {
+		if (cutil.na(this._style)) {
+			this._style = new Style();
+		}
+		return this._style;
+	}
+	set style(style) {
+		this._style = style;
+	}
+	toString() {
+		return `${this.selector} {${this.style.toString()}}`;
+	}
+}
+
+class RuleSet extends Obj {
+	static {
+		cutil.extend(this.prototype, {
+			selector: null,
+			_ss: null,
+		});
+	}
+	get ss() {
+		if (cutil.na(this._ss)) {
+			this._ss = new Stylesheet();
+		}
+		return this._ss;
+	}
+	set ss(ss) {
+		this._ss = ss;
+	}
+	toString() {
+		return `${this.selector} {${this.ss.toString()}}`;
+	}
+}
+
+class Stylesheet extends Obj {
+	static {
+		cutil.extend(this.prototype, {
+			_rules: null,
+		});
+	}
+	get rules() {
+		if (cutil.na(this._rules)) {
+			this._rules = [];
+		}
+		return this._rules;
+	}
+	set rules(rules) {
+		this._rules = rules;
+	}
+	clear() {
+		this.rules = null;
+	}
+	add(line) {
+		this.rules.push(line);
+	}
+	rule(selector, props) {
+		let style = new Style({props});
+		let rule = new Rule({selector, style});
+		this.rules.push(rule);
+	}
+	ruleset(selector, f) {
+		let rs = new RuleSet({selector});
+		chain(rs.ss, f);
+		this.rules.push(rs);
+	}
+	toString() {
+		return this.rules.map(o => o.toString()).join("\n");
+	}
+}
+
 class X extends Obj {
 	static {
 		cutil.extend(this, {
-			NS_HTML: "http://www.w3.org/1999/xhtml",
-			NS_SVG: "http://www.w3.org/2000/svg",
-			NS_MATHML: "http://www.w3.org/1998/Math/MathML",
+			NS_HTML,
+			NS_SVG,
+			NS_MATHML,
+			chain,
 		});
 		cutil.extend(this.prototype, {
+			NS_HTML,
+			NS_SVG,
+			NS_MATHML,
+			chain,
+			
 			_window:null,
 			_document: null,
 			dfns: this.NS_HTML,
@@ -126,14 +258,6 @@ class X extends Obj {
 			},
 		};
 	}
-	chain(node, f, ...rest) {
-		let x = this;
-		let result;
-		if (typeof f === "function") {
-			result = f(node, ...rest);
-		}
-		return result;
-	}
 	win(...rest) {
 		let x = this;
 		if (rest.length === 0) {
@@ -187,11 +311,6 @@ class X extends Obj {
 		x.chain(node, f);
 		return node;
 	}
-	dcc(tag, f) {
-		let x = this;
-		let {document} = x;
-		return x.dcx(tag, x.root(document)?.namespaceURI || X.NS_HTML, f);
-	}
 	dch(tag, f) {
 		let x = this;
 		return x.dcx(tag, X.NS_HTML, f);
@@ -226,32 +345,25 @@ class X extends Obj {
 		let x = this;
 		return x.ap(node, x.dcx(...rest));
 	}
-	cc(node, ...rest) {
-		let x = this;
-		return x.ap(node, x.dcc(...rest));
-	}
 	ch(node, ...rest) {
 		let x = this;
 		return x.ap(node, x.dch(...rest));
 	}
-	cg(node, tag, f) {
+	cg(node, ...rest) {
 		let x = this;
-		return x.ap(node, x.dcg(tag, f));
+		return x.ap(node, x.dcg(...rest));
 	}
-	cm(node, tag, f) {
+	cm(node, ...rest) {
 		let x = this;
-		return x.ap(node, x.dcm(tag, f));
+		return x.ap(node, x.dcm(...rest));
 	}
-	t(node, text, f) {
+	t(node, ...rest) {
 		let x = this;
-		let node1 = x.dt(text);
-		x.ap(node, node1);
-		x.chain(node1, f);
-		return node1;
+		return x.ap(node, x.dt(...rest));
 	}
-	comment(node, text, f) {
+	comment(node, ...rest) {
 		let x = this;
-		return x.ap(node, x.dcomment(text, f));
+		return x.ap(node, x.dcomment(...rest));
 	}
 	ns(node) {
 		return node.namespaceURI;
@@ -259,10 +371,13 @@ class X extends Obj {
 	tag(node) {
 		return node.tagName;
 	}
+	name(node) {
+		return node.tagName;
+	}
 	pref(node) {
 		return node.prefix;
 	}
-	name(node) {
+	nm(node) {
 		return node.localName;
 	}
 	toStrAll(nodes) {
@@ -325,6 +440,10 @@ class X extends Obj {
 		let x = this;
 		node.removeChild(node1);
 	}
+	del(node) {
+		let x = this;
+		node.parentNode?.removeChild(node);
+	}
 	cl(node) {
 		let x = this;
 		while (node.firstChild) {
@@ -345,11 +464,72 @@ class X extends Obj {
 	insertBefore(node, node1, node2 = null) {
 		node.insertBefore(node1, node2);
 	}
-	attr(node, k, v) {
-		
+	attr(...rest) {
+		let x = this;
+		if (res.length < 3) {
+			let [node, k] = rest;
+			return node.getAttribute(k);
+		} else {
+			let [node, k, v] = rest;
+			if (cutil.isNull(v)) {
+				node.removeAttribute(k);
+			}
+			else {
+				node.setAttribute(k, v);
+			}
+		}
 	}
-	css(node, k, v) {
-		
+	attrx(...rest) {
+		let x = this;
+		if (res.length < 4) {
+			let [node, k, ns] = rest;
+			let {name, prefix: pref, localName: nm, namespaceURI, value} = node.getAttributeNodeNS(ns, k);
+			return {name, pref, nm, ns, value};
+			return node.getAttributeNS(ns, k);
+		} else {
+			let [node, k, ns, v] = rest;
+			if (cutil.isNull(v)) {
+				node.removeAttributeNS(ns, k);
+			} else {
+				node.setAttributeNS(ns, k, v);
+			}
+		}
+	}
+	attrs(...rest) {
+		let x = this;
+		if (res.length < 2) {
+			let [node] = rest;
+			return node.getAttributeNames().map(k => [k, node.getAttribute(k)]);
+		} else {
+			let [node, bis] = rest;
+			for (let [k, v] of bis) {
+				if (cutil.isNull(v)) {
+					node.removeAttribute(k);
+				} else {
+					node.setAttribute(k, v);
+				}
+			}
+		}
+	}
+	css(...rest) {
+		let x = this;
+		if (res.length < 2) {
+			let [node] = rest;
+			return new Style({string: x.attr(node, "style")}).props;
+		} else {
+			let [node, props] = rest;
+			if (cutil.isNull(props)) {
+				x.attr(node, "style", null);
+			} else {
+				x.attr(node, "style", new Style({props: x.css(node)}).add(props));
+			}
+		}
+	}
+	ss(f) {
+		let x = this;
+		let ss = new Stylesheet();
+		x.chain(ss, f);
+		return ss;
 	}
 	kind(node) {
 		let x = this;
@@ -423,7 +603,6 @@ class X extends Obj {
 			"defns",
 			"dc",
 			"dcx",
-			"dcc",
 			"dch",
 			"dcg",
 			"dcm",
@@ -431,7 +610,6 @@ class X extends Obj {
 			"dcomment",
 			"c",
 			"cx",
-			"cc",
 			"ch",
 			"cg",
 			"cm",
@@ -441,6 +619,7 @@ class X extends Obj {
 			"tag",
 			"pref",
 			"name",
+			"nm",
 			"toStrAll",
 			"toText",
 			"toTextAll",
@@ -449,10 +628,16 @@ class X extends Obj {
 			"nodes",
 			"elements",
 			"remove",
+			"del",
 			"cl",
 			"ap",
 			"aps",
 			"insertBefore",
+			"attr",
+			"attrx",
+			"attrs",
+			"css",
+			"ss",
 		].reduce((env, k) => (env[k] = x[k].bind(x), env), {x, window, document});
 	}
 	static env(...rest) {
