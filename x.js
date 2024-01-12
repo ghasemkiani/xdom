@@ -655,6 +655,12 @@ class X extends Obj {
 	qq(node, selector) {
 		return Array.from(node.querySelectorAll(selector));
 	}
+	on(node, ev, cb, opt) {
+		node.addEventListener(ev, cb, opt);
+	}
+	off(node, ev, cb, opt) {
+		node.removeEventListener(ev, cb, opt);
+	}
 	env() {
 		let x = this;
 		let {window, document} = x;
@@ -716,6 +722,8 @@ class X extends Obj {
 			"css",
 			"ss",
 			"js",
+			"on",
+			"off",
 		].reduce((env, k) => (env[k] = x[k].bind(x), env), {x, window, document});
 	}
 	static env(...rest) {
@@ -729,11 +737,12 @@ const iwx = {
 	_x: null,
 	window: null,
 	document: null,
-	defns: null,
+	dfns: null,
 	get x() {
 		if (cutil.na(this._x)) {
-			let {window, document, defns} = this;
-			this._x = new X({window, document, defns});
+			let {window, document, dfns} = this;
+			dfns ||= NS_HTML;
+			this._x = new X({window, document, dfns});
 		}
 		return this._x;
 	},
