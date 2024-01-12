@@ -2,6 +2,7 @@ import beautify from "js-beautify";
 
 import {cutil} from "@ghasemkiani/base";
 import {Obj} from "@ghasemkiani/base";
+import {serializable} from "@ghasemkiani/base";
 
 const NS_HTML = "http://www.w3.org/1999/xhtml";
 const NS_SVG = "http://www.w3.org/2000/svg";
@@ -14,7 +15,7 @@ const chain = (arg, f, ...rest) => {
 	return result;
 };
 
-class Script extends Obj {
+class Script extends cutil.mixin(Obj, serializable) {
 	static {
 		cutil.extend(this.prototype, {
 			mime: "application/javascript",
@@ -40,7 +41,7 @@ class Script extends Obj {
 	}
 }
 
-class Style extends Obj {
+class Style extends cutil.mixin(Obj, serializable) {
 	static {
 		cutil.extend(this.prototype, {
 			_props: null,
@@ -372,6 +373,13 @@ class X extends Obj {
 		x.chain(node, f);
 		return node;
 	}
+	dcdata(data, f) {
+		let x = this;
+		let {document} = x;
+		let node = document.createCDATASection(data);
+		x.chain(node, f);
+		return node;
+	}
 	dcomment(text, f) {
 		let x = this;
 		let {document} = x;
@@ -402,6 +410,10 @@ class X extends Obj {
 	t(node, ...rest) {
 		let x = this;
 		return x.ap(node, x.dt(...rest));
+	}
+	cdata(node, ...rest) {
+		let x = this;
+		return x.ap(node, x.dcdata(...rest));
 	}
 	comment(node, ...rest) {
 		let x = this;
@@ -605,6 +617,7 @@ class X extends Obj {
 		if (b) {
 			string = beautify.html(string, {
 				preserve_newlines: false,
+				// unformatted: ["script"],
 			});
 		}
 		return string;
@@ -669,6 +682,7 @@ class X extends Obj {
 			"dcg",
 			"dcm",
 			"dt",
+			"dcdata",
 			"dcomment",
 			"c",
 			"cx",
@@ -676,6 +690,7 @@ class X extends Obj {
 			"cg",
 			"cm",
 			"t",
+			"cdata",
 			"comment",
 			"ns",
 			"tag",
