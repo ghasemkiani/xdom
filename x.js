@@ -742,4 +742,4 @@ const iwx = {
 	},
 };
 
-export {X, Script, Style, Rule, RuleSet, Stylesheet, iwx};
+export {X, Script, Style, Rule, RuleSet, Stylesheet, iwx, beautify};
