@@ -1,3 +1,5 @@
+import beautify from "js-beautify";
+
 import {cutil} from "@ghasemkiani/base";
 import {Obj} from "@ghasemkiani/base";
 
@@ -135,19 +137,26 @@ class Stylesheet extends Obj {
 	}
 	clear() {
 		this.rules = null;
+		return this;
 	}
 	add(line) {
 		this.rules.push(line);
+		return this;
+	}
+	instruction(line) {
+		return this.add(line);
 	}
 	rule(selector, props) {
 		let style = new Style({props});
 		let rule = new Rule({selector, style});
 		this.rules.push(rule);
+		return this;
 	}
 	ruleset(selector, f) {
 		let rs = new RuleSet({selector});
 		chain(rs.ss, f);
 		this.rules.push(rs);
+		return this;
 	}
 	toString() {
 		return this.rules.map(o => o.toString()).join("\n");
@@ -302,6 +311,12 @@ class X extends Obj {
 			let [document] = rest;
 			x.document = document;
 		}
+	}
+	odoc(node) {
+		return node.ownerDocument;
+	}
+	pnode(node) {
+		return node.parentNode;
 	}
 	defns(...rest) {
 		let x = this;
@@ -582,11 +597,17 @@ class X extends Obj {
 		})[node.nodeType];
 		
 	}
-	toStr(node) {
+	toStr(node, b = false) {
 		let x = this;
 		let {window} = x;
 		let {XMLSerializer} = window;
-		return new XMLSerializer().serializeToString(node);
+		let string = new XMLSerializer().serializeToString(node);
+		if (b) {
+			string = beautify.html(string, {
+				preserve_newlines: false,
+			});
+		}
+		return string;
 	}
 	fromStr(string, mime = "application/xml") {
 		let x = this;
@@ -615,6 +636,12 @@ class X extends Obj {
 	root(document = this.document) {
 		return document.documentElement;
 	}
+	q(node, selector) {
+		return node.querySelector(selector);
+	}
+	qq(node, selector) {
+		return Array.from(node.querySelectorAll(selector));
+	}
 	env() {
 		let x = this;
 		let {window, document} = x;
@@ -627,10 +654,14 @@ class X extends Obj {
 			"fromStrNode",
 			"fromStrElement",
 			"root",
+			"q",
+			"qq",
 			
 			"chain",
 			"win",
 			"doc",
+			"odoc",
+			"pnode",
 			"defns",
 			"dc",
 			"dcx",
@@ -679,4 +710,21 @@ class X extends Obj {
 	}
 }
 
-export {X, Script, Style, Rule, RuleSet, Stylesheet};
+const iwx = {
+	_x: null,
+	window: null,
+	document: null,
+	defns: null,
+	get x() {
+		if (cutil.na(this._x)) {
+			let {window, document, defns} = this;
+			this._x = new X({window, document, defns});
+		}
+		return this._x;
+	},
+	set x(x) {
+		this._x = x;
+	},
+};
+
+export {X, Script, Style, Rule, RuleSet, Stylesheet, iwx};
