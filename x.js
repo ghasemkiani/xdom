@@ -41,7 +41,7 @@ class Script extends cutil.mixin(Obj, serializable) {
 	}
 }
 
-class Style extends cutil.mixin(Obj, serializable) {
+class Style extends Obj {
 	static {
 		cutil.extend(this.prototype, {
 			_props: null,
@@ -120,7 +120,7 @@ class RuleSet extends Obj {
 	}
 }
 
-class Stylesheet extends Obj {
+class Stylesheet extends cutil.mixin(Obj, serializable) {
 	static {
 		cutil.extend(this.prototype, {
 			mime: "text/css",
