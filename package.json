@@ -1,6 +1,6 @@
 {
 	"name": "@ghasemkiani/xdom",
-	"version": "1.1.7",
+	"version": "1.1.8",
 	"description": "",
 	"type": "module",
 	"main": "index.js",
@@ -14,6 +14,7 @@
 	"license": "MIT",
 	"dependencies": {
 		"@ghasemkiani/base": "github:ghasemkiani/base",
+		"@ghasemkiani/dom": "github:ghasemkiani/dom",
 		"js-beautify": "^1.14.11"
 	}
 }

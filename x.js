@@ -3,8 +3,10 @@ import beautify from "js-beautify";
 import {cutil} from "@ghasemkiani/base";
 import {Obj} from "@ghasemkiani/base";
 import {serializable} from "@ghasemkiani/base";
+import {iwdom} from "@ghasemkiani/dom";
 
 const NS_HTML = "http://www.w3.org/1999/xhtml";
+const NS_HTML40 = "http://www.w3.org/TR/REC-html40";
 const NS_SVG = "http://www.w3.org/2000/svg";
 const NS_MATHML = "http://www.w3.org/1998/Math/MathML";
 const chain = (arg, f, ...rest) => {
@@ -164,16 +166,18 @@ class Stylesheet extends cutil.mixin(Obj, serializable) {
 	}
 }
 
-class X extends Obj {
+class X extends cutil.mixin(Obj, iwdom) {
 	static {
 		cutil.extend(this, {
 			NS_HTML,
+			NS_HTML40,
 			NS_SVG,
 			NS_MATHML,
 			chain,
 		});
 		cutil.extend(this.prototype, {
 			NS_HTML,
+			NS_HTML40,
 			NS_SVG,
 			NS_MATHML,
 			chain,
@@ -208,28 +212,6 @@ class X extends Obj {
 		return !name ? "" : cutil.asString(name).replace(/[A-Z]/g, function (match) {
 			return "-" + match.toLowerCase();
 		});
-	}
-	getWindow() {
-		return cutil.global().window;
-	}
-	get window() {
-		if(!this._window) {
-			this._window = this.getWindow();
-		}
-		return this._window;
-	}
-	set window(window) {
-		this._window = window;
-		this.document = null;
-	}
-	get document() {
-		if(cutil.na(this._document)) {
-			this._document = this.window.document;
-		}
-		return this._document;
-	}
-	set document(document) {
-		this._document = document;
 	}
 	parseSelector(s) {
 		let res = {
@@ -617,7 +599,6 @@ class X extends Obj {
 		if (b) {
 			string = beautify.html(string, {
 				preserve_newlines: false,
-				// unformatted: ["script"],
 			});
 		}
 		return string;
@@ -660,6 +641,19 @@ class X extends Obj {
 	}
 	off(node, ev, cb, opt) {
 		node.removeEventListener(ev, cb, opt);
+	}
+	escape(s) {
+		let x = this;
+		let node = x.dch("div");
+		x.attr(node, "data-dummy", s);
+		return /data-dummy="([^"]*)"/.exec(x.toStr(node))[1];
+	}
+	unescape(s) {
+		let x = this;
+		let node = x.dch("textarea");
+		// s must be valid, escaped HTML text
+		node.innerHTML = cutil.asString(s).replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+		return node.value;
 	}
 	env() {
 		let x = this;
@@ -724,6 +718,8 @@ class X extends Obj {
 			"js",
 			"on",
 			"off",
+			"escape",
+			"unescape",
 		].reduce((env, k) => (env[k] = x[k].bind(x), env), {x, window, document});
 	}
 	static env(...rest) {
@@ -731,24 +727,25 @@ class X extends Obj {
 		let x = new X(...rest);
 		return x.env();
 	}
+	static create({DOM, window, document, dfns}) {
+		dfns ||= NS_HTML;
+		return new X({DOM, window, document, dfns});
+	}
 }
 
-const iwx = {
+// user class must also extend iwdom or iwjsdom
+const iwx = cutil.extend({}/* , iwdom */, {
 	_x: null,
-	window: null,
-	document: null,
 	dfns: null,
 	get x() {
 		if (cutil.na(this._x)) {
-			let {window, document, dfns} = this;
-			dfns ||= NS_HTML;
-			this._x = new X({window, document, dfns});
+			this._x = X.create(this);
 		}
 		return this._x;
 	},
 	set x(x) {
 		this._x = x;
 	},
-};
+});
 
 export {X, Script, Style, Rule, RuleSet, Stylesheet, iwx, beautify};
