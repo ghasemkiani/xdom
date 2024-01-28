@@ -1,9 +1,12 @@
 {
 	"name": "@ghasemkiani/xdom",
-	"version": "1.1.8",
+	"version": "1.1.9",
 	"description": "",
 	"type": "module",
 	"main": "index.js",
+	"exports": {
+		".": "./index.js"
+	},
 	"scripts": {
 		"test": "node --test"
 	},

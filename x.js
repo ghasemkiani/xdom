@@ -182,8 +182,6 @@ class X extends cutil.mixin(Obj, iwdom) {
 			NS_MATHML,
 			chain,
 			
-			_window:null,
-			_document: null,
 			dfns: this.NS_HTML,
 		});
 	}
@@ -425,12 +423,16 @@ class X extends cutil.mixin(Obj, iwdom) {
 		}
 		return (nodes || []).map(node => x.toStr(node)).join("");
 	}
+	toStrInner(node) {
+		let x = this;
+		return x.toStrAll(x.nodes(node));
+	}
 	toText(node) {
 		let x = this;
 		return x.kind(node) === "processingInstruction" ? ""
 			: x.kind(node) === "comment" ? ""
 			: x.kind(node) === "element" ? x.toTextAll(x.nodes(node))
-			: x.kind(node) === "text" ? x.toStr(node)
+			: x.kind(node) === "text" ? node.data
 			: x.toStr(node);
 	}
 	toTextAll(nodes) {
