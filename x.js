@@ -457,9 +457,26 @@ class X extends cutil.mixin(Obj, iwdom) {
 		} else if(!cutil.isArray(nodes)) {
 			nodes = [nodes];
 		}
-		let dummy = x.dc(x.document, "dummy");
+		let dummy = x.dc(x.doc(), "dummy");
 		dummy.innerHTML = x.toStrAll(nodes);
 		return x.nodes(dummy);
+	}
+	adopt(node, document = this.document) {
+		let x = this;
+		return document.adoptNode(node);
+	}
+	adoptAll(nodes = [], document = this.document) {
+		let x = this;
+		return nodes.map(node => x.adopt(node, document));
+	}
+	imp(node, document = this.document) {
+		let x = this;
+		let deep = true;
+		return document.importNode(node, deep);
+	}
+	impAll(nodes = [], document = this.document) {
+		let x = this;
+		return nodes.map(node => x.imp(node, document));
 	}
 	nodes(node, nodes) {
 		let x = this;
@@ -706,6 +723,10 @@ class X extends cutil.mixin(Obj, iwdom) {
 			"toTextAll",
 			"clone",
 			"cloneAll",
+			"adopt",
+			"adoptAll",
+			"imp",
+			"impAll",
 			"nodes",
 			"elements",
 			"remove",
