@@ -430,9 +430,11 @@ class X extends cutil.mixin(Obj, iwdom) {
 	toText(node) {
 		let x = this;
 		return x.kind(node) === "processingInstruction" ? ""
+			: x.kind(node) === "document" ? x.toText(x.root(node))
 			: x.kind(node) === "comment" ? ""
 			: x.kind(node) === "element" ? x.toTextAll(x.nodes(node))
 			: x.kind(node) === "text" ? node.data
+			: x.kind(node) === "cdata" ? node.data
 			: x.toStr(node);
 	}
 	toTextAll(nodes) {
@@ -582,14 +584,14 @@ class X extends cutil.mixin(Obj, iwdom) {
 			[Node.ATTRIBUTE_NODE]: "attribute",
 			[Node.TEXT_NODE]: "text",
 			[Node.CDATA_SECTION_NODE]: "cdata",
-			[Node.ENTITY_REFERENCE_NODE]: "entityReference",
-			[Node.ENTITY_NODE]: "entity",
+			[Node.ENTITY_REFERENCE_NODE]: "entityReference", // deprecated
+			[Node.ENTITY_NODE]: "entity", // deprecated
 			[Node.PROCESSING_INSTRUCTION_NODE]: "processingInstruction",
 			[Node.COMMENT_NODE]: "comment",
 			[Node.DOCUMENT_NODE]: "document",
 			[Node.DOCUMENT_TYPE_NODE]: "dtd",
 			[Node.DOCUMENT_FRAGMENT_NODE]: "fragment",
-			[Node.NOTATION_NODE]: "notation",
+			[Node.NOTATION_NODE]: "notation", // deprecated
 		})[node.nodeType];
 		
 	}
