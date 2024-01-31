@@ -265,7 +265,7 @@ class X extends cutil.mixin(Obj, iwdom) {
 				}
 				if (res.cssList.length > 0) {
 					for (let [k, v] of res.cssList) {
-						x.css(node, {k: v});
+						x.css(node, {[k]: v});
 					}
 				}
 				if (res.attrList.length > 0) {
