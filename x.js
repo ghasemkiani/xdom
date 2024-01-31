@@ -37,13 +37,20 @@ class Script extends cutil.mixin(Obj, serializable) {
 	set items(items) {
 		this._items = items;
 	}
-	add(f, arg) {
-		this.items.push([f, arg]);
+	add(f, arg, pretty = false) {
+		this.items.push([f, arg, pretty]);
 		return this;
 	}
 	toString() {
 		const AsyncFunction = (async function () {}).constructor;
-		return this.items.map(([f, arg]) => `(${f instanceof AsyncFunction ? "await " : ""}(${f.toString()})(${!cutil.isUndefined(arg) ? JSON.stringify(arg) : ""}));`).join("\n") + "\n";
+		return this.items.map(([f, arg, pretty]) => {
+			let ftext = f.toString();
+			if (pretty) {
+				ftext = beautify.js(ftext);
+			}
+			let text = `(${f instanceof AsyncFunction ? "await " : ""}(${ftext})(${!cutil.isUndefined(arg) ? JSON.stringify(arg) : ""}));`;
+			return text;
+		}).join("\n") + "\n";
 	}
 }
 
@@ -592,9 +599,9 @@ class X extends cutil.mixin(Obj, iwdom) {
 		x.chain(ss, f);
 		return ss;
 	}
-	js(f, arg) {
+	js(f, arg, pretty = false) {
 		let x = this;
-		return new Script().add(f, arg);
+		return new Script().add(f, arg, pretty);
 	}
 	kind(node) {
 		let x = this;
