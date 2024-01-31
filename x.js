@@ -11,7 +11,11 @@ const NS_SVG = "http://www.w3.org/2000/svg";
 const NS_MATHML = "http://www.w3.org/1998/Math/MathML";
 const chain = (arg, f, ...rest) => {
 	let result;
-	if (typeof f === "function") {
+	// arg must be available
+	// this is useful in combination with x.q():
+	// x.chain(x.q(node, selector), node => {});
+	// the function will be called only if the node is found
+	if (cutil.a(arg) && typeof f === "function") {
 		result = f(arg, ...rest);
 	}
 	return result;
