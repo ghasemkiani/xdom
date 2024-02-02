@@ -378,6 +378,13 @@ class X extends cutil.mixin(Obj, iwdom) {
 		x.chain(node, f);
 		return node;
 	}
+	dfrag(f) {
+		let x = this;
+		let {document} = x;
+		let node = document.createDocumentFragment();
+		x.chain(node, f);
+		return node;
+	}
 	c(node, ...rest) {
 		let x = this;
 		return x.ap(node, x.dc(...rest));
@@ -716,6 +723,7 @@ class X extends cutil.mixin(Obj, iwdom) {
 			"dt",
 			"dcdata",
 			"dcomment",
+			"dfrag",
 			"c",
 			"cx",
 			"ch",
