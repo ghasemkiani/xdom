@@ -185,6 +185,7 @@ class X extends cutil.mixin(Obj, iwdom) {
 			NS_SVG,
 			NS_MATHML,
 			chain,
+			beautify,
 		});
 		cutil.extend(this.prototype, {
 			NS_HTML,
@@ -192,6 +193,7 @@ class X extends cutil.mixin(Obj, iwdom) {
 			NS_SVG,
 			NS_MATHML,
 			chain,
+			beautify,
 			
 			dfns: this.NS_HTML,
 		});
@@ -464,20 +466,18 @@ class X extends cutil.mixin(Obj, iwdom) {
 		}
 		return (nodes || []).map(node => x.toText(node)).join("");
 	}
-	clone(node) {
+	clone(node, deep = true) {
 		let x = this;
-		return x.cloneAll([node])[0];
+		return node.cloneNode(deep);
 	}
-	cloneAll(nodes) {
+	cloneAll(nodes, deep = true) {
 		let x = this;
 		if(cutil.na(nodes)) {
 			nodes = [];
 		} else if(!cutil.isArray(nodes)) {
 			nodes = [nodes];
 		}
-		let dummy = x.dc(x.doc(), "dummy");
-		dummy.innerHTML = x.toStrAll(nodes);
-		return x.nodes(dummy);
+		return nodes.map(node => x.clone(node, deep));
 	}
 	adopt(node, document = this.document) {
 		let x = this;
