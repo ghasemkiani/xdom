@@ -387,6 +387,13 @@ class X extends cutil.mixin(Obj, iwdom) {
 		x.chain(node, f);
 		return node;
 	}
+	dins(target, data, f) {
+		let x = this;
+		let {document} = x;
+		let node = document.createProcessingInstruction(target, data);
+		x.chain(node, f);
+		return node;
+	}
 	c(node, ...rest) {
 		let x = this;
 		return x.ap(node, x.dc(...rest));
@@ -418,6 +425,10 @@ class X extends cutil.mixin(Obj, iwdom) {
 	comment(node, ...rest) {
 		let x = this;
 		return x.ap(node, x.dcomment(...rest));
+	}
+	ins(node, ...rest) {
+		let x = this;
+		return x.ap(node, x.dins(...rest));
 	}
 	ns(node) {
 		return node.namespaceURI;
@@ -724,6 +735,7 @@ class X extends cutil.mixin(Obj, iwdom) {
 			"dcdata",
 			"dcomment",
 			"dfrag",
+			"dins",
 			"c",
 			"cx",
 			"ch",
@@ -732,6 +744,7 @@ class X extends cutil.mixin(Obj, iwdom) {
 			"t",
 			"cdata",
 			"comment",
+			"ins",
 			"ns",
 			"tag",
 			"pref",
