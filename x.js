@@ -606,7 +606,7 @@ class X extends cutil.mixin(Obj, iwdom) {
 			if (cutil.isNull(props)) {
 				x.attr(node, "style", null);
 			} else {
-				x.attr(node, "style", new Style({props: x.css(node)}).add(props));
+				x.attr(node, "style", new Style({props: x.css(node)}).add(props).string);
 			}
 		}
 	}
