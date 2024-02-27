@@ -352,11 +352,11 @@ class X extends cutil.mixin(Obj, iwdom) {
 	}
 	dcg(tag, f) {
 		let x = this;
-		return x.cx(tag, X.NS_SVG, f);
+		return x.dcx(tag, X.NS_SVG, f);
 	}
 	dcm(tag, f) {
 		let x = this;
-		return x.cx(tag, X.NS_MATHML, f);
+		return x.dcx(tag, X.NS_MATHML, f);
 	}
 	dt(text, f) {
 		let x = this;
