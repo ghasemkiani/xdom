@@ -546,6 +546,14 @@ class X extends cutil.mixin(Obj, iwdom) {
 			x.ap(node, node1);
 		}
 	}
+	apc(node, node1) {
+		let x = this;
+		return x.ap(node, x.clone(node1));
+	}
+	apsc(node, nodes) {
+		let x = this;
+		return x.aps(node, x.cloneAll(nodes));
+	}
 	insertBefore(node, node1, node2 = null) {
 		node.insertBefore(node1, node2);
 	}
