@@ -86,7 +86,7 @@ class Style extends Obj {
 		this.add(string);
 	}
 	toString() {
-		return Object.entries(this.props).map(([k, v]) => `${k}: ${v};`).join(" ");
+		return Object.entries(this.props).filter(([k, v]) => !cutil.isNil(v)).map(([k, v]) => `${k}: ${cutil.isEmptyString(v) ? '""' : v};`).join(" ");
 	}
 }
 
