@@ -237,6 +237,10 @@ class X extends cutil.mixin(Obj, iwdom) {
 			res.tag = tag;
 			return "";
 		})
+		.replace(/\$(.*)$/g, (match, text) => {
+			res.text = text;
+			return "";
+		})
 		.replace(/\{([^{]*)\}/g, (match, css) => {
 			res.cssList = res.cssList.concat(css.split(/;/g).filter(bi => !!bi).map(bi => /^([^:]*):?(.*)$/.exec(bi).slice(1, 3)));
 			return "";
@@ -253,10 +257,7 @@ class X extends cutil.mixin(Obj, iwdom) {
 			res.classList.push(...cutil.asString(cls).split(/\s+/g));
 			return "";
 		})
-		.replace(/\$(.*)$/g, (match, text) => {
-			res.text = text;
-			return "";
-		});
+		;
 		return res;
 	}
 	parseTag(s) {
