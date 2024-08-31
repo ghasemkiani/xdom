@@ -1,6 +1,6 @@
 {
 	"name": "@ghasemkiani/xdom",
-	"version": "1.1.25",
+	"version": "1.1.26",
 	"description": "",
 	"type": "module",
 	"main": "index.js",
@@ -8,7 +8,10 @@
 		".": "./index.js"
 	},
 	"scripts": {
-		"test": "node --test"
+		"test": "node --test",
+		"format": "prettier --write .",
+		"lint": "eslint .",
+		"lint:fix": "eslint --fix ."
 	},
 	"keywords": [
 		"dom"
@@ -19,5 +22,9 @@
 		"@ghasemkiani/base": "github:ghasemkiani/base",
 		"@ghasemkiani/dom": "github:ghasemkiani/dom",
 		"js-beautify": "^1.14.11"
+	},
+	"devDependencies": {
+		"eslint": "^9.9.1",
+		"prettier": "^3.3.3"
 	}
 }
