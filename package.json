@@ -1,6 +1,6 @@
 {
   "name": "@ghasemkiani/xdom",
-  "version": "1.1.27",
+  "version": "1.1.28",
   "description": "",
   "type": "module",
   "main": "index.js",
@@ -10,9 +10,6 @@
   "scripts": {
     "test": "node --test"
   },
-  "keywords": [
-    "dom"
-  ],
   "author": "Ghasem Kiani",
   "license": "MIT",
   "dependencies": {
