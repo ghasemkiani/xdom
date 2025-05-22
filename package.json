@@ -1,30 +1,23 @@
 {
-	"name": "@ghasemkiani/xdom",
-	"version": "1.1.26",
-	"description": "",
-	"type": "module",
-	"main": "index.js",
-	"exports": {
-		".": "./index.js"
-	},
-	"scripts": {
-		"test": "node --test",
-		"format": "prettier --write .",
-		"lint": "eslint .",
-		"lint:fix": "eslint --fix ."
-	},
-	"keywords": [
-		"dom"
-	],
-	"author": "Ghasem Kiani",
-	"license": "MIT",
-	"dependencies": {
-		"@ghasemkiani/base": "github:ghasemkiani/base",
-		"@ghasemkiani/dom": "github:ghasemkiani/dom",
-		"js-beautify": "^1.14.11"
-	},
-	"devDependencies": {
-		"eslint": "^9.9.1",
-		"prettier": "^3.3.3"
-	}
+  "name": "@ghasemkiani/xdom",
+  "version": "1.1.27",
+  "description": "",
+  "type": "module",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js"
+  },
+  "scripts": {
+    "test": "node --test"
+  },
+  "keywords": [
+    "dom"
+  ],
+  "author": "Ghasem Kiani",
+  "license": "MIT",
+  "dependencies": {
+    "@ghasemkiani/base": "github:ghasemkiani/base",
+    "@ghasemkiani/dom": "github:ghasemkiani/dom",
+    "js-beautify": "^1.14.11"
+  }
 }

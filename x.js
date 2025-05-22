@@ -79,15 +79,15 @@ class Style extends Obj {
     let pp = cutil.isObject(string)
       ? Object.entries(string)
       : cutil
-        .asString(string)
-        .split(";")
-        .map((s) => s.trim())
-        .filter((s) => !!s)
-        .map((s) => {
-          let [k, ...rest] = s.split(":");
-          let v = rest.join(":");
-          return [k, v];
-        });
+          .asString(string)
+          .split(";")
+          .map((s) => s.trim())
+          .filter((s) => !!s)
+          .map((s) => {
+            let [k, ...rest] = s.split(":");
+            let v = rest.join(":");
+            return [k, v];
+          });
     for (let [k, v] of pp) {
       this.props[k] = v;
     }
@@ -231,15 +231,15 @@ class X extends cutil.mixin(Obj, iwdom) {
     return !name
       ? ""
       : cutil.asString(name).replace(/\-(.)/g, function (match, letter) {
-        return letter.toUpperCase();
-      });
+          return letter.toUpperCase();
+        });
   }
   static toDashed(name) {
     return !name
       ? ""
       : cutil.asString(name).replace(/[A-Z]/g, function (match) {
-        return "-" + match.toLowerCase();
-      });
+          return "-" + match.toLowerCase();
+        });
   }
   parseSelector(s) {
     let res = {
@@ -265,7 +265,7 @@ class X extends cutil.mixin(Obj, iwdom) {
           css
             .split(/;/g)
             .filter((bi) => !!bi)
-            .map((bi) => /^([^:]*):?(.*)$/.exec(bi).slice(1, 3))
+            .map((bi) => /^([^:]*):?(.*)$/.exec(bi).slice(1, 3)),
         );
         return "";
       })
@@ -274,7 +274,7 @@ class X extends cutil.mixin(Obj, iwdom) {
           attr
             .split(/,/g)
             .filter((bi) => !!bi)
-            .map((bi) => /^([^=]*)=?(.*)$/.exec(bi).slice(1, 3))
+            .map((bi) => /^([^=]*)=?(.*)$/.exec(bi).slice(1, 3)),
         );
         return "";
       })
@@ -657,7 +657,7 @@ class X extends cutil.mixin(Obj, iwdom) {
         x.attr(
           node,
           "style",
-          new Style({ props: x.css(node) }).add(props).string
+          new Style({ props: x.css(node) }).add(props).string,
         );
       }
     }
@@ -862,7 +862,7 @@ const iwx = cutil.extend(
     set x(x) {
       this._x = x;
     },
-  }
+  },
 );
 
 export { X, Script, Style, Rule, RuleSet, Stylesheet, iwx, beautify };
