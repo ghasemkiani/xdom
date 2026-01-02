@@ -516,9 +516,11 @@ class X extends cutil.mixin(Obj, iwdom) {
     let result = "";
     const sp = (level) => " ".repeat(level * n);
     if (x.kind(node) === "element") {
-      result += `${sp(level)}x.ch(node, ${JSON.stringify(x.name(node))}, node => {`;
+      result += `${sp(level)}x.ch(node, ${JSON.stringify(x.name(node) + (cutil.a(node.id) ? "#" + node.id : "") + (cutil.a(node.className) ? "." + node.className.replace(/\s+/g, ".") : ""))}, node => {`;
       for (let [k, v] of x.attrs(node)) {
-        result += `\n${sp(level + 1)}x.attr(node, ${JSON.stringify(k)}, ${JSON.stringify(v)});`;
+        if (k !== "id" && k !== "class") {
+          result += `\n${sp(level + 1)}x.attr(node, ${JSON.stringify(k)}, ${JSON.stringify(v)});`;
+        }
       }
       for (let node1 of x.nodes(node)) {
         result += `\n${x.toJs(node1, level + 1, n)}`;
