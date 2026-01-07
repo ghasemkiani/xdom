@@ -252,7 +252,11 @@ class X extends cutil.mixin(Obj, iwdom) {
 		this._bag = bag;
 	}
   at(...rest) {
-    if (rest.length === 1) {
+    if (rest.length === 0) {
+      let { bag } = this;
+      this.bag = null;
+      return bag;
+    } else if (rest.length === 1) {
       let [name] = rest;
       return this.bag[name];
     } else {
