@@ -209,6 +209,7 @@ class X extends cutil.mixin(Obj, iwdom) {
       beautify,
 
       dfns: this.NS_HTML,
+      _bag: null,
     });
   }
   static unescape(s) {
@@ -241,6 +242,25 @@ class X extends cutil.mixin(Obj, iwdom) {
           return "-" + match.toLowerCase();
         });
   }
+  get bag() {
+		if (cutil.na(this._bag)) {
+			this._bag = {};
+		}
+		return this._bag;
+	}
+	set bag(bag) {
+		this._bag = bag;
+	}
+  at(...rest) {
+    if (rest.length === 1) {
+      let [name] = rest;
+      return this.bag[name];
+    } else {
+      let [node, name] = rest;
+      this.bag[name] = node;
+      return this;
+    }
+  }
   parseSelector(s) {
     let res = {
       tag: "",
@@ -249,18 +269,19 @@ class X extends cutil.mixin(Obj, iwdom) {
       cssList: [],
       attrList: [],
       text: "",
+      name: "",
     };
     cutil
       .asString(s)
-      .replace(/^([^$#.[{]*)/, (tag) => {
+      .replace(/^([^@$#.[{]*)/, (tag) => {
         res.tag = tag;
         return "";
       })
-      .replace(/\$(.*)$/g, (match, text) => {
+      .replace(/\$(.*?)$/g, (match, text) => {
         res.text = text;
         return "";
       })
-      .replace(/\{([^{]*)\}/g, (match, css) => {
+      .replace(/\{(.*?)\}/g, (match, css) => {
         res.cssList = res.cssList.concat(
           css
             .split(/;/g)
@@ -269,7 +290,7 @@ class X extends cutil.mixin(Obj, iwdom) {
         );
         return "";
       })
-      .replace(/\[([^[]*)\]/g, (match, attr) => {
+      .replace(/\[(.*?)\]/g, (match, attr) => {
         res.attrList = res.attrList.concat(
           attr
             .split(/,/g)
@@ -278,11 +299,15 @@ class X extends cutil.mixin(Obj, iwdom) {
         );
         return "";
       })
-      .replace(/#([^$#.[{]*)/g, (match, id) => {
+      .replace(/#([^@$#.[{]*)/g, (match, id) => {
         res.id = id;
         return "";
       })
-      .replace(/\.([^$#.\[{]*)/g, (match, cls) => {
+      .replace(/@([^@$#.[{]*)/g, (match, name) => {
+        res.name = name;
+        return "";
+      })
+      .replace(/\.([^@$#.\[{]*)/g, (match, cls) => {
         res.classList.push(...cutil.asString(cls).split(/\s+/g));
         return "";
       });
@@ -296,6 +321,9 @@ class X extends cutil.mixin(Obj, iwdom) {
       f: (node) => {
         if (res.id) {
           x.attr(node, "id", res.id);
+        }
+        if (res.name) {
+          x.at(node, res.name);
         }
         if (res.classList.length > 0) {
           x.attr(node, "class", res.classList.join(" "));
