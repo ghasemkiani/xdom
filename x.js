@@ -277,7 +277,11 @@ class X extends cutil.mixin(Obj, iwdom) {
     };
     cutil
       .asString(s)
-      .replace(/^([^@$#.[{]*)/, (tag) => {
+      .replace(/^!(.*)$/, (match, tag) => {
+        res.tag = tag;
+        return "";
+      })
+      .replace(/^([^@$#.[{]+)/, (match, tag) => {
         res.tag = tag;
         return "";
       })
