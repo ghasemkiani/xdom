@@ -647,6 +647,7 @@ class X extends cutil.mixin(Obj, iwdom) {
   }
   insertBefore(node, node1, node2 = null) {
     node.insertBefore(node1, node2);
+    return node1;
   }
   attr(...rest) {
     let x = this;
